@@ -13,8 +13,9 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+
 import Data from '@/data/data.json'
-import formatGraph from '@/utils/formatGraph'
 import formatTable from '@/utils/formatTable'
 import DataTable from '@/components/DataTable.vue'
 
@@ -23,17 +24,14 @@ export default {
     DataTable
   },
   data() {
-    // 感染者数グラフ
-    const patientsGraph = formatGraph(Data.patients_summary.data)
     // 感染者数
     const patientsTable = formatTable(Data.patients.data)
+    const dateAsOf = dayjs(Data.patients.date).format('MM/DD')
 
     const sumInfoOfPatients = {
-      lText: patientsGraph[
-        patientsGraph.length - 1
-      ].cumulative.toLocaleString(),
+      lText: patientsTable.datasets.length.toLocaleString(),
       sText: this.$t('{date}の累計', {
-        date: patientsGraph[patientsGraph.length - 1].label
+        date: dateAsOf
       }),
       unit: this.$t('人')
     }
@@ -58,8 +56,8 @@ export default {
 
     // 陽性患者の属性をソートする
     patientsTable.datasets.sort(function(a, b) {
-      if (a['公表日'] > b['公表日']) return -1
-      if (a['公表日'] < b['公表日']) return 1
+      if (a['確定日'] > b['確定日']) return -1
+      if (a['確定日'] < b['確定日']) return 1
       return 0
     })
 

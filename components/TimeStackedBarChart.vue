@@ -32,6 +32,7 @@
 import DataView from '@/components/DataView.vue'
 import DataSelector from '@/components/DataSelector.vue'
 import DataViewBasicInfoPanel from '@/components/DataViewBasicInfoPanel.vue'
+import { getGraphSeriesStyle } from '@/utils/colors'
 
 export default {
   components: { DataView, DataSelector, DataViewBasicInfoPanel },
@@ -107,7 +108,7 @@ export default {
       }
     },
     displayData() {
-      const colorArray = ['#18834f', '#18ae63']
+      const graphSeries = getGraphSeriesStyle(this.chartData.length)
       if (this.dataKind === 'transition') {
         return {
           labels: this.labels,
@@ -115,8 +116,9 @@ export default {
             return {
               label: this.items[index],
               data: item,
-              backgroundColor: colorArray[index],
-              borderWidth: 0
+              backgroundColor: graphSeries[index].fillColor,
+              borderColor: graphSeries[index].strokeColor,
+              borderWidth: 1
             }
           })
         }
@@ -127,8 +129,9 @@ export default {
           return {
             label: this.items[index],
             data: this.cumulative(item),
-            backgroundColor: colorArray[index],
-            borderWidth: 0
+            backgroundColor: graphSeries[index].fillColor,
+            borderColor: graphSeries[index].strokeColor,
+            borderWidth: 1
           }
         })
       }
@@ -146,9 +149,9 @@ export default {
           displayColors: false,
           callbacks: {
             label: tooltipItem => {
-              const labelTokyo = this.$t('県内')
-              const labelOthers = this.$t('その他')
-              const labelArray = [labelTokyo, labelOthers]
+              const labelPositive = this.$t('陽性')
+              const labelNegative = this.$t('陰性')
+              const labelArray = [labelPositive, labelNegative]
               let casesTotal, cases
               if (this.dataKind === 'transition') {
                 casesTotal = sumArray[tooltipItem.index].toLocaleString()
